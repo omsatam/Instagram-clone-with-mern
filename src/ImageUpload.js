@@ -15,7 +15,7 @@ function ImageUpload({ username }) {
   };
 
   const handleUpload = (e) => {
-    if (e.target.files !== undefined && caption !== "") {
+    if (image !== undefined && caption !== "") {
       const uploadTask = storage.ref(`images/${image.name}`).put(image);
       uploadTask.on(
         "state_changed",
