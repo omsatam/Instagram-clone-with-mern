@@ -15,41 +15,44 @@ function ImageUpload({ username }) {
   };
 
   const handleUpload = (e) => {
-    const uploadTask = storage.ref(`images/${image.name}`).put(image);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        //progress function...
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(progress);
-      },
-      (error) => {
-        //error function ...
-        console.log(error);
-        alert(error.message);
-      },
-      () => {
-        //complete function
-        storage
-          .ref("images")
-          .child(image.name)
-          .getDownloadURL()
-          .then((url) => {
-            db.collection("posts").add({
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              caption: caption,
-              imageUrl: url,
-              username: username,
+    if (e.target.files !== undefined && caption !== "") {
+      const uploadTask = storage.ref(`images/${image.name}`).put(image);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          //progress function...
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(progress);
+        },
+        (error) => {
+          //error function ...
+          console.log(error);
+          alert(error.message);
+        },
+        () => {
+          //complete function
+          storage
+            .ref("images")
+            .child(image.name)
+            .getDownloadURL()
+            .then((url) => {
+              db.collection("posts").add({
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                caption: caption,
+                imageUrl: url,
+                username: username,
+              });
+              setProgress(0);
+              setCaption("");
+              setImage(null);
             });
-            setProgress(0);
-            setCaption("");
-            setImage(null);
-          });
-      }
-    );
+        }
+      );
+    }
   };
+
   return (
     <div className="imageupload">
       <progress className="imageupload__progress" value={progress} max="100" />
@@ -57,12 +60,14 @@ function ImageUpload({ username }) {
         className="imageupload__Caption"
         type="text"
         placeholder="Enter a caption..."
+        required
         onChange={(event) => setCaption(event.target.value)}
         value={caption}
       />
       <input
         className="imageupload__File"
         type="file"
+        required
         onChange={handleChange}
       />
       <Button className="imageUpload__button" onClick={handleUpload}>
