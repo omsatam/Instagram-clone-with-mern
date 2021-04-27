@@ -192,7 +192,7 @@ function App() {
         onFailure={() => {}}
       />
 
-{user?.displayName ? <ImageUpload username={user.displayName}/> : <h3 style={{textAlign : "center"}}>Please login to upload posts</h3> }
+{user ? (<ImageUpload username={user.displayName}/>) : <h3 style={{textAlign : "center"}}>Please login to upload posts</h3> }
      
     </div>
   );
