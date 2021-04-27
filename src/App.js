@@ -71,6 +71,7 @@ function App() {
     event.preventDefault();
     auth.createUserWithEmailAndPassword(email, password)
     .then((authUser)=>{
+      setUser(authUser)
       return authUser.user.updateProfile({displayName:username})
     })
     .catch((error)=> alert(error.message))
